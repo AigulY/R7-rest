@@ -1,5 +1,7 @@
 class Users::RegistrationsController < Devise::RegistrationsController
     respond_to :json
+
+    skip_forgery_protection only: [:create]
   
     private
   
@@ -11,6 +13,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
   
     def register_success
       render json: { message: 'Signed up sucessfully.' }, status: :created
+
+      cookies["CSRF-TOKEN"] = form_authenticity_token
+      response.set_header('X-CSRF-Token', form_authenticity_token)
+      
     end
   
     def register_failed resource
