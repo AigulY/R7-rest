@@ -7,7 +7,6 @@ class Api::V1::FactsController < ApplicationController
   
     # GET /members/:member_id/facts
     def index
-      @member = Member.find(params[:member_id])
       render json: @member.facts
     end
   
@@ -18,7 +17,6 @@ class Api::V1::FactsController < ApplicationController
 
     # POST /members/:member_id/facts
     def create
-       @member = Member.find(params[:member_id])
       @fact = @member.facts.new(fact_params)
       if @fact.save
         render json: @fact, status: 201
