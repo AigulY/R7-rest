@@ -7,56 +7,42 @@ class Api::V1::FactsController < ApplicationController
   
     # GET /members/:member_id/facts
     def index
-      @member = Member.find(params[:member_id])
-      render json: @member.facts # note that because the facts route is nested inside members
-                               # we return only the facts belonging to that member
+      render json: @member.facts
     end
   
     # GET /members/:member_id/facts/:id
     def show
-        if @fact
-          render json: @fact
-        else
-          render json: { error: 'Fact not found' }, status: 404
-        end
-      end
-  
+      render json: @fact, status: 200
+    end
+
     # POST /members/:member_id/facts
     def create
-       @member = Member.find(params[:member_id])
       @fact = @member.facts.new(fact_params)
       if @fact.save
         render json: @fact, status: 201
       else
-        render json: { error: 
-  "The fact entry could not be created. #{@fact.errors.full_messages.to_sentence}"},
-        status: 400
+        render json: { error: "The fact entry could not be created. #{@fact.errors.full_messages.to_sentence}" }, status: 400
       end
     end
   
     # PUT /members/:member_id/facts/:id
     def update
-        if @fact && check_access
-          if @fact.update(fact_params)
-            render json: @fact
-          else
-            render json: { error: @fact.errors.full_messages.to_sentence }, status: 400
-          end
-        else
-          render json: { error: 'Fact not found or unauthorized' }, status: 404
-        end
+      if @fact.update(fact_params)
+        render json: @fact, status: 200
+      else
+        render json: { error: "Failed to update the fact record" }, status: 400
       end
-  
-    # DELETE /members/:member_id/facts/:id
+    end
+
+    #DELETE /members/:member_id/facts/:id
     def destroy
-        if @fact && check_access
-          @fact.destroy
-          render json: { message: 'Fact successfully deleted.' }, status: 200
-        else
-          render json: { error: 'Fact not found or unauthorized' }, status: 404
-        end
+      if @fact.destroy
+        render json: { message: "Fact was successully deleted" }, status: 200
+      else
+        render json: { error: "The fact record could not be deleted. #{@fact.errors.full_messages.to_sentence}"}, status: 400
       end
-  
+    end
+
     private
   
     def fact_params

@@ -13,7 +13,7 @@ class Api::V1::MembersController < ApplicationController
     # GET /members/:id
     def show
       if check_access
-        render json: @member
+        render json: @member, status: 200
       end
     end
   
@@ -24,9 +24,7 @@ class Api::V1::MembersController < ApplicationController
       if @member.save
         render json: @member, status: 201
       else
-        render json: { error:
-          "Unable to create member: #{@member.errors.full_messages.to_sentence}"},
-          status: 400
+        render json: { error: "Unable to create member: #{@member.errors.full_messages.to_sentence}" }, status: 400
       end
     end
   
@@ -34,13 +32,13 @@ class Api::V1::MembersController < ApplicationController
     def update
       if check_access
         if @member.update(member_params)
-            render json: @member
-          else
-            render json: { error: @member.errors.full_messages.to_sentence }, status: 400
-          end
-        end
+            render json: @member, status: 200
+        else
+            render json: { error: "Unable to update member: #{@member.errors.full_messages.to_sentence}"}, status: 400
+        end  
       end
-  
+    end
+
     # DELETE /members/:id
     def destroy
       if check_access

@@ -12,11 +12,9 @@ class Users::SessionsController < Devise::SessionsController
   
     def respond_with(resource, _opts = {})
       if !resource.id.nil?
-        render json: { message: 'You are logged in.' }, status: :created
-
         cookies["CSRF-TOKEN"] = form_authenticity_token
         response.set_header('X-CSRF-Token', form_authenticity_token)
-        
+        render json: { message: 'You are logged in.' }, status: :created
       else
         render json: { message: 'Authentication failed.'}, status: :unauthorized
       end
